@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: youruser/yourimage:latest
+          tags: ctdgunner/vs-code-server:latest
