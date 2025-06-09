@@ -1,29 +1,51 @@
 FROM ahmadnassri/vscode-server:latest
 
-# Install common dev tools + OpenSSH
+# Install development tools and SSH server (removing duplicates already in base image)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     openssh-server \
-    git \
-    curl \
-    wget \
     unzip \
-    build-essential \
     python3 \
     python3-pip \
     python3-venv \
     nodejs \
-    npm && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    npm \
+    supervisor && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create SSH run directory and set root password (optional)
-RUN mkdir /var/run/sshd && echo 'root:devpassword' | chpasswd
+# Install Claude Code
+RUN npm install -g @anthropic-ai/claude-code
 
-# Allow root login (optional, safer with key-based login)
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# Setup SSH with key-based authentication
+RUN mkdir -p /var/run/sshd /root/.ssh && \
+    chmod 700 /root/.ssh && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 
-# Expose SSH port
-EXPOSE 22
+# Create supervisor configuration for running both services
+RUN echo '[supervisord]\n\
+nodaemon=true\n\
+user=root\n\
+\n\
+[program:sshd]\n\
+command=/usr/sbin/sshd -D\n\
+autostart=true\n\
+autorestart=true\n\
+stderr_logfile=/var/log/sshd.err.log\n\
+stdout_logfile=/var/log/sshd.out.log\n\
+\n\
+[program:vscode]\n\
+command=code serve-web --without-connection-token --accept-server-license-terms --host 0.0.0.0 --port 8000 --cli-data-dir /root/.vscode/cli-data --user-data-dir /root/.vscode/user-data --server-data-dir /root/.vscode/server-data --extensions-dir /root/.vscode/extensions\n\
+autostart=true\n\
+autorestart=true\n\
+stderr_logfile=/var/log/vscode.err.log\n\
+stdout_logfile=/var/log/vscode.out.log' > /etc/supervisor/conf.d/supervisord.conf
 
-# Start SSH server by default
-CMD ["/usr/sbin/sshd", "-D"]
+# Expose ports for VS Code server and SSH
+EXPOSE 8000 22
+
+# Use supervisor to run both SSH and VS Code server
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
