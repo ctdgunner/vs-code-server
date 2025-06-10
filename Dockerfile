@@ -25,6 +25,10 @@ RUN mkdir -p /var/run/sshd /root/.ssh && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 
+# Copy and setup entrypoint script for git configuration
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Create startup script to run both services
 RUN echo '#!/bin/bash\n\
 # Start SSH daemon in background\n\
@@ -37,6 +41,5 @@ exec code serve-web --without-connection-token --accept-server-license-terms --h
 # Expose ports for VS Code server and SSH
 EXPOSE 8000 22
 
-# Override the base image ENTRYPOINT and use our startup script
-ENTRYPOINT ["/start.sh"]
-CMD []
+# Use our combined entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
