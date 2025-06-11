@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  vscode-server:
+  vs-code-server:
     build: .
     # Alternative: use pre-built image from Docker Hub
     # image: ctdgunner/vs-code-server:latest
@@ -11,42 +11,32 @@ services:
       - "2222:22"    # SSH access (mapped to avoid conflicts with host SSH)
     
     volumes:
-      # VS Code data persistence (from original ahmadnassri/vscode-server container)
-      - ./server-data:/root/.vscode/server-data
-      - ./user-data:/root/.vscode/user-data  
-      - ./cli-data:/root/.vscode/cli-data
-      - ./extensions:/root/.vscode/extensions
+      # Projects Directory - matches unRAID template
+      - ./workspace:/root/workspace
       
-      # SSH access configuration (added in this extension)
-      - ./ssh-keys/authorized_keys:/root/.ssh/authorized_keys:ro
+      # VS Code App Data - matches unRAID template  
+      - ./config:/root/.vscode/
       
-      # Optional: Mount your development projects
-      - ./projects:/workspace
-      
-      # Optional: Mount additional configuration files
-      - ./config:/root/.config
-      
-      # Optional: Mount SSH config and known_hosts
-      - ./ssh-keys/config:/root/.ssh/config:ro
-      - ./ssh-keys/known_hosts:/root/.ssh/known_hosts:ro
+      # SSH Keys - matches unRAID template
+      - ./ssh:/root/.ssh/:ro
     
     environment:
-      # Set default shell
+      # Set default shell - matches unRAID template
       - SHELL=/bin/bash
       
-      # Optional: Set timezone
+      # Timezone - matches unRAID template
       - TZ=UTC
       
-      # Git configuration via environment variables
-      - GIT_USER_NAME=Your Name
-      - GIT_USER_EMAIL=your.email@example.com
+      # Git configuration via environment variables - matches unRAID template
+      - GIT_USER_NAME=
+      - GIT_USER_EMAIL=
     
     restart: unless-stopped
     
-    container_name: vscode-dev-server
+    container_name: vs-code-server
     
-    # Optional: Add hostname for easier identification
-    hostname: vscode-dev-server
+    # Add hostname for easier identification - matches unRAID template
+    hostname: vscode
     
     # Optional: Resource limits
     # deploy:

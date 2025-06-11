@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>vs-code-server</Name>
+  <Repository>docker.io/ctdgunner/vs-code-server:latest</Repository>
+  <Registry>https://hub.docker.com/r/ctdgunner/vs-code-server</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/ctdgunner/vs-code-server</Support>
+  <Project>https://github.com/ctdgunner/vs-code-server</Project>
+  <Overview>VS Code Server running in a Docker container with web interface access. Provides a full Visual Studio Code development environment accessible through your browser or acts as a host for you to use Remote-SSH from any desktop VS Code environment. This container is preloaded with a small assortment of development tools aswell.</Overview>
+  <Category>Tools:Development</Category>
+  <WebUI>http://[IP]:[PORT:8000]/</WebUI>
+  <TemplateURL/>
+  <Icon>https://code.visualstudio.com/apple-touch-icon.png</Icon>
+  <ExtraParams>--hostname=vscode</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="Shell" Target="SHELL" Default="/bin/bash" Mode="" Description="Default shell environment" Type="Variable" Display="always" Required="false" Mask="false">/bin/bash</Config>
+  <Config Name="WebUI Port" Target="8000" Default="8000" Mode="tcp" Description="Port for VS Code Server web interface" Type="Port" Display="always" Required="true" Mask="false">8000</Config>
+  <Config Name="SSH Port" Target="22" Default="2222" Mode="tcp" Description="SSH access port (mapped to avoid conflicts with host SSH)" Type="Port" Display="always" Required="false" Mask="false">2222</Config>
+  <Config Name="Projects Directory" Target="/root/workspace" Default="/mnt/user/workspace/" Mode="rw" Description="Directory for development workspace and projects" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/workspace/</Config>
+  <Config Name="App Data" Target="/root/.vscode/" Default="/mnt/user/appdata/vs-code-server/config/" Mode="rw" Description="VS Code app data directory" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vs-code-server/config/</Config>
+  <Config Name="SSH Keys" Target="/root/.ssh/" Default="/mnt/user/appdata/vs-code-server/ssh/" Mode="ro" Description="SSH Authorized Keys" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/vs-code-server/ssh/</Config>
+  <Config Name="Timezone" Target="TZ" Default="UTC" Mode="" Description="Container timezone" Type="Variable" Display="always" Required="false" Mask="false">UTC</Config>
+  <Config Name="Git User Name" Target="GIT_USER_NAME" Default="" Mode="" Description="Git user name (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Git User Email" Target="GIT_USER_EMAIL" Default="" Mode="" Description="Git user email (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+</Container>
