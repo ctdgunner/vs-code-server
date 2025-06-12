@@ -18,14 +18,11 @@ RUN apt-get update && \
 # Install Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Setup SSH with key-based authentication
-RUN mkdir -p /var/run/sshd /root/.ssh && \
-    chmod 700 /root/.ssh && \
-    touch /root/.ssh/authorized_keys && \
-    chmod 600 /root/.ssh/authorized_keys && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
-    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+# Setup SSH with password authentication
+RUN mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    echo 'root:password' | chpasswd
 
 # Copy and setup entrypoint script for git configuration
 COPY entrypoint.sh /entrypoint.sh

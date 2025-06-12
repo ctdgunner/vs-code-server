@@ -5,7 +5,7 @@ A Docker container providing VS Code Server with web interface access and SSH co
 ## Features
 
 - **VS Code Server** - Browser-based VS Code interface accessible at http://[IP]:8000/
-- **SSH Access** - Secure remote terminal access via SSH keys (port 2222)
+- **SSH Access** - Secure remote terminal access via SSH password (port 2222)
 - **Development Tools** - Python, Node.js, npm, Git, and **Claude Code** pre-installed
 - **Persistent Storage** - VS Code settings, third party configs, and projects data persist across restarts
 - **Git Integration** - Configurable git user name and email via environment variables
@@ -106,21 +106,21 @@ docker run -d \
 
 ## SSH Configuration
 
-The container uses key-based SSH authentication for security:
+The container uses password-based SSH authentication:
 
-1. **Generate Your SSH keys on your Remote Machine** (laptop or desktop, NOT THE CONTAINER) (if you don't have them):
+1. **Default credentials**:
+   - Username: `root`
+   - Password: `password`
+
+2. **Connect via SSH**:
    ```bash
-   ssh-keygen -t rsa -b 4096 -f [PATH_TO_KEY]/vscode_server_key
+   ssh root@[IP] -p 2222
    ```
 
-2. **Copy public key content from remote to authorized_keys file in container**:
+3. **Change the default password** (recommended):
    ```bash
-   cp [PATH_TO_KEY]/vscode_server_key.pub [PATH_TO_APPDATA]/.ssh/authorized_keys
-   ```
-
-3. **Connect via SSH from remote**:
-   ```bash
-   ssh -i [PATH_TO_KEY]/vscode_server_key root@[IP] -p 2222
+   # After connecting via SSH
+   passwd root
    ```
 
 ## VS Code Server Access
@@ -133,7 +133,7 @@ The container uses key-based SSH authentication for security:
 
 1. **Start the container**: `docker-compose up -d`
 2. **Access VS Code**: Open http://[IP]:8000 in your browser
-3. **SSH access**: Use `ssh -i [HOST_PATH_TO_APPDATA]/ssh/authorized_keys/vscode_server_key root@[IP] -p 2222`
+3. **SSH access**: Use `ssh root@[IP] -p 2222` (password: `password`)
 4. **Install extensions**: Extensions persist in the `./vs-code-server` volume
 5. **Develop**: Your projects in `./projects` are available at `/projects`
 
@@ -150,9 +150,9 @@ The pre-built image is used by default in the provided `docker-compose.yml`.
 ## Troubleshooting
 
 ### SSH Connection Issues
-- Ensure your public key is in `/.ssh/authorized_keys`
-- Check file permissions: `chmod 600 /.ssh/authorized_keys`
 - Verify the container is running: `docker-compose ps`
+- Ensure port 2222 is not blocked by firewall
+- Default password is `password` - change it for security
 
 ### VS Code Server Issues
 - Check logs: `docker-compose logs vs-code-server`
@@ -191,10 +191,10 @@ environment:
 
 ## Security Notes
 
-- SSH uses key-based authentication only (passwords disabled)
+- SSH uses password authentication with default password `password`
+- **Change the default password immediately** for security
 - Container runs as root (suitable for development environments)
-- For production use, consider running as non-root user
-- Keep your SSH private keys secure and never commit them to version control
+- For production use, consider running as non-root user and using key-based authentication
 
 ## License
 
