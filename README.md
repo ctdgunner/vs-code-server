@@ -119,6 +119,14 @@ The container uses password-based SSH authentication:
    ssh root@[IP] -p 2222
    ```
 
+**Suggested SSH Config Template**
+  ```
+  Host vs-code-server-RAVEN
+    HostName 192.168.50.155
+    User root
+    Port 2222
+  ```
+
 ## VS Code Server Access
 
 1. Open your browser to http://[IP]:8000
