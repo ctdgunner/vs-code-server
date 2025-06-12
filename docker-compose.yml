@@ -2,32 +2,27 @@ version: '3.8'
 
 services:
   vs-code-server:
-    build: .
-    # Alternative: use pre-built image from Docker Hub
-    # image: ctdgunner/vs-code-server:latest
+    image: ctdgunner/vs-code-server:latest
     
     ports:
       - "8000:8000"  # VS Code Server web interface
       - "2222:22"    # SSH access (mapped to avoid conflicts with host SSH)
     
     volumes:
-      # Projects Directory - matches unRAID template
-      - ./workspace:/root/workspace
+      # Projects Directory
+      - ./projects/:/projects/
       
-      # VS Code App Data - matches unRAID template  
-      - ./config:/root/.vscode/
-      
-      # SSH Keys - matches unRAID template
-      - ./ssh:/root/.ssh/:ro
+      # VS Code App Data  
+      - ./vs-code-server/:/root/
     
     environment:
-      # Set default shell - matches unRAID template
+      # Set default shell
       - SHELL=/bin/bash
       
-      # Timezone - matches unRAID template
+      # Timezone
       - TZ=UTC
       
-      # Git configuration via environment variables - matches unRAID template
+      # Git configuration via environment variables
       - GIT_USER_NAME=
       - GIT_USER_EMAIL=
     
@@ -35,27 +30,5 @@ services:
     
     container_name: vs-code-server
     
-    # Add hostname for easier identification - matches unRAID template
+    # Add hostname for easier identification
     hostname: vscode
-    
-    # Optional: Resource limits
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 2G
-    #       cpus: '1.0'
-    #     reservations:
-    #       memory: 512M
-    #       cpus: '0.5'
-
-# Optional: Create a dedicated network
-# networks:
-#   vscode-dev:
-#     driver: bridge
-
-# Optional: Define named volumes instead of bind mounts
-# volumes:
-#   vscode-server-data:
-#   vscode-user-data:
-#   vscode-cli-data:
-#   vscode-extensions:

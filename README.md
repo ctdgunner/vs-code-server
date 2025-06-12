@@ -6,41 +6,13 @@ A Docker container providing VS Code Server with web interface access and SSH co
 
 - **VS Code Server** - Browser-based VS Code interface accessible at http://[IP]:8000/
 - **SSH Access** - Secure remote terminal access via SSH keys (port 2222)
-- **Development Tools** - Python, Node.js, npm, Git, and Claude Code pre-installed
-- **Persistent Storage** - VS Code settings and workspace data persist across restarts
+- **Development Tools** - Python, Node.js, npm, Git, and **Claude Code** pre-installed
+- **Persistent Storage** - VS Code settings, third party configs, and projects data persist across restarts
 - **Git Integration** - Configurable git user name and email via environment variables
 
 ## Quick Start
 
-1. **Clone this repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd vs-code-server
-   ```
-
-2. **Create required directories:**
-   ```bash
-   mkdir -p workspace config ssh
-   ```
-
-3. **Add your SSH public key:**
-   ```bash
-   cp ~/.ssh/id_rsa.pub ssh/authorized_keys
-   # Or generate a new key if needed:
-   # ssh-keygen -t rsa -b 4096 -f ssh/vscode_server_key
-   # cp ssh/vscode_server_key.pub ssh/authorized_keys
-   ```
-
-4. **Start with Docker Compose:**
-   ```bash
-   docker-compose up -d
-   ```
-
-5. **Access your development environment:**
-   - **VS Code**: http://localhost:8000
-   - **SSH**: `ssh -i ssh/vscode_server_key root@localhost -p 2222`
-
-## Docker Compose Configuration
+### Option 1: Docker Compose
 
 Use the provided `docker-compose.yml` file for easy setup:
 
@@ -49,31 +21,39 @@ version: '3.8'
 
 services:
   vs-code-server:
-    build: .
-    # Or use pre-built image: ctdgunner/vs-code-server:latest
+    image: ctdgunner/vs-code-server:latest
+    
     ports:
       - "8000:8000"  # VS Code Server web interface
-      - "2222:22"    # SSH access
+      - "2222:22"    # SSH access (mapped to avoid conflicts with host SSH)
+    
     volumes:
       # Projects Directory
-      - ./workspace:/root/workspace
+      - ./projects/:/projects/
       
-      # VS Code App Data
-      - ./config:/root/.vscode/
-      
-      # SSH Keys
-      - ./ssh:/root/.ssh/:ro
+      # VS Code App Data  
+      - ./vs-code-server/:/root/
+    
     environment:
+      # Set default shell
       - SHELL=/bin/bash
+      
+      # Timezone
       - TZ=UTC
+      
+      # Git configuration via environment variables
       - GIT_USER_NAME=
       - GIT_USER_EMAIL=
+    
     restart: unless-stopped
+    
     container_name: vs-code-server
+    
+    # Add hostname for easier identification
     hostname: vscode
 ```
 
-## Manual Docker Run
+### Option 2: Manual Docker Run
 
 If you prefer using `docker run` directly:
 
@@ -83,31 +63,14 @@ docker run -d \
   --hostname vscode \
   -p 8000:8000 \
   -p 2222:22 \
-  -v $(pwd)/workspace:/root/workspace \
-  -v $(pwd)/config:/root/.vscode/ \
-  -v $(pwd)/ssh:/root/.ssh/:ro \
+  -v $(pwd)/projects:/projects \
+  -v $(pwd)/vs-code-server:/root \
   -e SHELL=/bin/bash \
   -e TZ=UTC \
   -e GIT_USER_NAME= \
   -e GIT_USER_EMAIL= \
   --restart unless-stopped \
   ctdgunner/vs-code-server:latest
-```
-
-## Directory Structure
-
-```
-vs-code-server/
-├── Dockerfile
-├── entrypoint.sh
-├── docker-compose.yml
-├── README.md
-├── unraid_template.xml
-├── .github/workflows/docker-build.yml
-├── workspace/            # Your development projects and workspace
-├── config/               # VS Code app data and configuration
-└── ssh/                  # SSH keys for access
-    └── authorized_keys   # Your public SSH key
 ```
 
 ## Ports
@@ -120,9 +83,17 @@ vs-code-server/
 ## Volume Mounts
 
 ### Required
-- `./workspace:/root/workspace` - Your development projects and workspace
-- `./config:/root/.vscode/` - VS Code app data, settings, extensions, and configuration
-- `./ssh:/root/.ssh/:ro` - SSH authorized keys for secure access
+- `./projects/:/projects/` - Your development projects and workspace
+- `./vs-code-server/:/root/` - VS Code app data, settings, extensions, and configuration
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SHELL` | `/bin/bash` | Default shell environment |
+| `TZ` | `UTC` | Container timezone |
+| `GIT_USER_NAME` | ` ` | Git user name for commits (optional) |
+| `GIT_USER_EMAIL` | ` ` | Git user email for commits (optional) |
 
 ## Pre-installed Tools
 
@@ -137,34 +108,34 @@ vs-code-server/
 
 The container uses key-based SSH authentication for security:
 
-1. **Generate SSH keys** (if you don't have them):
+1. **Generate Your SSH keys on your Remote Machine** (laptop or desktop, NOT THE CONTAINER) (if you don't have them):
    ```bash
-   ssh-keygen -t rsa -b 4096 -f ssh/vscode_server_key
+   ssh-keygen -t rsa -b 4096 -f [PATH_TO_KEY]/vscode_server_key
    ```
 
-2. **Copy public key to authorized_keys**:
+2. **Copy public key content from remote to authorized_keys file in container**:
    ```bash
-   cp ssh/vscode_server_key.pub ssh/authorized_keys
+   cp [PATH_TO_KEY]/vscode_server_key.pub [PATH_TO_APPDATA]/.ssh/authorized_keys
    ```
 
-3. **Connect via SSH**:
+3. **Connect via SSH from remote**:
    ```bash
-   ssh -i ssh/vscode_server_key root@localhost -p 2222
+   ssh -i [PATH_TO_KEY]/vscode_server_key root@[IP] -p 2222
    ```
 
 ## VS Code Server Access
 
-1. Open your browser to http://localhost:8000
+1. Open your browser to http://[IP]:8000
 2. Your VS Code interface will load with all extensions and settings preserved
 3. Use the integrated terminal or connect via SSH for command-line access
 
 ## Development Workflow
 
 1. **Start the container**: `docker-compose up -d`
-2. **Access VS Code**: Open http://localhost:8000 in your browser
-3. **SSH access**: Use `ssh -i ssh/vscode_server_key root@localhost -p 2222`
-4. **Install extensions**: Extensions persist in the `./config` volume
-5. **Develop**: Your projects in `./workspace` are available at `/root/workspace`
+2. **Access VS Code**: Open http://[IP]:8000 in your browser
+3. **SSH access**: Use `ssh -i [HOST_PATH_TO_APPDATA]/ssh/authorized_keys/vscode_server_key root@[IP] -p 2222`
+4. **Install extensions**: Extensions persist in the `./vs-code-server` volume
+5. **Develop**: Your projects in `./projects` are available at `/projects`
 
 ## GitHub Actions
 
@@ -174,19 +145,13 @@ The repository includes automatic Docker image building:
 - **Registry**: Docker Hub (docker.io)
 - **Base image monitoring**: Automatically rebuilds when `ahmadnassri/vscode-server:latest` updates
 
-To use the pre-built image, update your `docker-compose.yml`:
-```yaml
-services:
-  vs-code-server:
-    image: ctdgunner/vs-code-server:latest
-    # Remove the 'build: .' line
-```
+The pre-built image is used by default in the provided `docker-compose.yml`.
 
 ## Troubleshooting
 
 ### SSH Connection Issues
-- Ensure your public key is in `ssh/authorized_keys`
-- Check file permissions: `chmod 600 ssh/authorized_keys`
+- Ensure your public key is in `/.ssh/authorized_keys`
+- Check file permissions: `chmod 600 /.ssh/authorized_keys`
 - Verify the container is running: `docker-compose ps`
 
 ### VS Code Server Issues
