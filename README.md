@@ -67,6 +67,7 @@ docker run -d \
   -v $(pwd)/vs-code-server:/root \
   -e SHELL=/bin/bash \
   -e TZ=UTC \
+  -e SSH_PASSWORD=password \
   -e GIT_USER_NAME= \
   -e GIT_USER_EMAIL= \
   --restart unless-stopped \
@@ -92,6 +93,7 @@ docker run -d \
 |----------|---------|-------------|
 | `SHELL` | `/bin/bash` | Default shell environment |
 | `TZ` | `UTC` | Container timezone |
+| `SSH_PASSWORD` | `password` | SSH root password |
 | `GIT_USER_NAME` | ` ` | Git user name for commits (optional) |
 | `GIT_USER_EMAIL` | ` ` | Git user email for commits (optional) |
 
@@ -108,19 +110,13 @@ docker run -d \
 
 The container uses password-based SSH authentication:
 
-1. **Default credentials**:
+1. **Credentials**:
    - Username: `root`
-   - Password: `password`
+   - Password: Set via `SSH_PASSWORD` environment variable (defaults to `password`)
 
 2. **Connect via SSH**:
    ```bash
    ssh root@[IP] -p 2222
-   ```
-
-3. **Change the default password** (recommended):
-   ```bash
-   # After connecting via SSH
-   passwd root
    ```
 
 ## VS Code Server Access
@@ -133,7 +129,7 @@ The container uses password-based SSH authentication:
 
 1. **Start the container**: `docker-compose up -d`
 2. **Access VS Code**: Open http://[IP]:8000 in your browser
-3. **SSH access**: Use `ssh root@[IP] -p 2222` (password: `password`)
+3. **SSH access**: Use `ssh root@[IP] -p 2222` with your configured password
 4. **Install extensions**: Extensions persist in the `./vs-code-server` volume
 5. **Develop**: Your projects in `./projects` are available at `/projects`
 
@@ -152,7 +148,7 @@ The pre-built image is used by default in the provided `docker-compose.yml`.
 ### SSH Connection Issues
 - Verify the container is running: `docker-compose ps`
 - Ensure port 2222 is not blocked by firewall
-- Default password is `password` - change it for security
+- Check your SSH_PASSWORD environment variable is set correctly
 
 ### VS Code Server Issues
 - Check logs: `docker-compose logs vs-code-server`
@@ -185,14 +181,14 @@ Add environment variables in `docker-compose.yml`:
 environment:
   - SHELL=/bin/bash
   - TZ=UTC  # Set your timezone
+  - SSH_PASSWORD=your_secure_password  # Set SSH password
   - GIT_USER_NAME=Your Name  # Set git user name
   - GIT_USER_EMAIL=your.email@example.com  # Set git user email
 ```
 
 ## Security Notes
 
-- SSH uses password authentication with default password `password`
-- **Change the default password immediately** for security
+- SSH uses password authentication configured via `SSH_PASSWORD` environment variable
 - Container runs as root (suitable for development environments)
 - For production use, consider running as non-root user and using key-based authentication
 

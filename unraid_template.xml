@@ -27,6 +27,7 @@
   <Config Name="Projects Directory" Target="/projects" Default="/mnt/user/projects/" Mode="rw" Description="Directory for development projects" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/projects/</Config>
   <Config Name="App Data" Target="/root/" Default="/mnt/user/appdata/vs-code-server/" Mode="rw" Description="VS Code app data directory" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vs-code-server/</Config>
   <Config Name="Timezone" Target="TZ" Default="UTC" Mode="" Description="Container timezone" Type="Variable" Display="always" Required="false" Mask="false">UTC</Config>
+  <Config Name="SSH Password" Target="SSH_PASSWORD" Default="password" Mode="" Description="SSH root password (change for security)" Type="Variable" Display="always" Required="false" Mask="true">password</Config>
   <Config Name="Git User Name" Target="GIT_USER_NAME" Default="" Mode="" Description="Git user name (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="Git User Email" Target="GIT_USER_EMAIL" Default="" Mode="" Description="Git user email (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
 </Container>

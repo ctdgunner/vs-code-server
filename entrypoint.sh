@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Set SSH password from environment variable (default to 'password' if not set)
+SSH_PASSWORD=${SSH_PASSWORD:-password}
+echo "root:$SSH_PASSWORD" | chpasswd
+
 # Create .gitconfig from environment variables if they exist
 if [ ! -z "$GIT_USER_NAME" ] || [ ! -z "$GIT_USER_EMAIL" ]; then
     echo "Setting up git configuration..."

@@ -22,6 +22,9 @@ services:
       # Timezone
       - TZ=UTC
       
+      # SSH password (change for security)
+      - SSH_PASSWORD=password
+      
       # Git configuration via environment variables
       - GIT_USER_NAME=
       - GIT_USER_EMAIL=
