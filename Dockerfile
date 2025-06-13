@@ -27,6 +27,9 @@ RUN mkdir -p /var/run/sshd && \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Add /projects shortcut to /root for ease of use within the container
+RUN ln -s /projects /root/projects
+
 # Expose ports for VS Code server and SSH
 EXPOSE 8000 22
 
