@@ -19,6 +19,12 @@ if [ ! -z "$GIT_USER_NAME" ] || [ ! -z "$GIT_USER_EMAIL" ]; then
     echo "Git configuration complete."
 fi
 
+# Configure SSH environment to use same VS Code directories
+echo 'export VSCODE_IPC_HOOK_CLI=/root/.vscode/cli-data' >> /root/.bashrc
+echo 'export VSCODE_SERVER_DATA_DIR=/root/.vscode/server-data' >> /root/.bashrc
+echo 'export VSCODE_USER_DATA_DIR=/root/.vscode/user-data' >> /root/.bashrc
+echo 'export VSCODE_EXTENSIONS_DIR=/root/.vscode/extensions' >> /root/.bashrc
+
 # Start SSH daemon in background
 /usr/sbin/sshd -D &
 
