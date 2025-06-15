@@ -97,6 +97,8 @@ docker run -d \
 | `GIT_USER_NAME` | ` ` | Git user name for commits (optional) |
 | `GIT_USER_EMAIL` | ` ` | Git user email for commits (optional) |
 
+*Note: To have the timezone be Daylight Savings aware use a timezone syntax like* `America/New_York`
+
 ## Pre-installed Tools
 
 - **Git** - Version control
