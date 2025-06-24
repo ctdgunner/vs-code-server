@@ -10,6 +10,7 @@ RUN apt-get update && \
     python3-venv \
     nodejs \
     npm \
+    make \
     && \
     apt-get autoremove -y && \
     apt-get clean && \
