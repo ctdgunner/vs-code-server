@@ -33,6 +33,9 @@ services:
       
       # VS Code App Data  
       - ./vs-code-server/:/root/
+      
+      # Docker Socket 
+      - /var/run/docker.sock:/var/run/docker.sock
     
     environment:
       # Set default shell
@@ -65,6 +68,7 @@ docker run -d \
   -p 2222:22 \
   -v $(pwd)/projects:/projects \
   -v $(pwd)/vs-code-server:/root \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -e SHELL=/bin/bash \
   -e TZ=UTC \
   -e SSH_PASSWORD=password \
@@ -86,6 +90,9 @@ docker run -d \
 ### Required
 - `./projects/:/projects/` - Your development projects and workspace
 - `./vs-code-server/:/root/` - VS Code app data, settings, extensions, and configuration
+
+### Optional
+- `/var/run/docker.sock:/var/run/docker.sock` - This is needed to connect to Docker
 
 ## Environment Variables
 

@@ -30,4 +30,5 @@
   <Config Name="Git User Name" Target="GIT_USER_NAME" Default="" Mode="" Description="Git user name (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="Git User Email" Target="GIT_USER_EMAIL" Default="" Mode="" Description="Git user email (optional)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="SSH Password" Target="SSH_PASSWORD" Default="password" Mode="" Description="SSH root password (change for security)" Type="Variable" Display="always" Required="false" Mask="true">password</Config>
+  <Config Name="Docker Socket" Target="/var/run/docker.sock" Default="/var/run/docker.sock" Mode="rw" Description="This is needed to connect to Docker" Type="Path" Display="always" Required="false" Mask="false">/var/run/docker.sock</Config>
 </Container>
