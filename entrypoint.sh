@@ -29,6 +29,18 @@ echo "Fixing permissions on /home/vscode and /projects..."
 chown -R $PUID:$PGID /home/vscode 2>/dev/null || true
 chown $PUID:$PGID /projects 2>/dev/null || true
 
+# Ensure shell config files exist with correct ownership
+if [ ! -f /home/vscode/.bashrc ]; then
+    cp /etc/skel/.bashrc /home/vscode/.bashrc
+    echo -e "\n# Set umask for world-writable files\numask 0000" >> /home/vscode/.bashrc
+    chown $PUID:$PGID /home/vscode/.bashrc
+fi
+if [ ! -f /home/vscode/.profile ]; then
+    cp /etc/skel/.profile /home/vscode/.profile
+    echo -e "\n# Set umask for world-writable files\numask 0000" >> /home/vscode/.profile
+    chown $PUID:$PGID /home/vscode/.profile
+fi
+
 # Create .gitconfig from environment variables if they exist (as vscode user)
 if [ ! -z "$GIT_USER_NAME" ] || [ ! -z "$GIT_USER_EMAIL" ]; then
     echo "Setting up git configuration..."

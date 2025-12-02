@@ -34,7 +34,11 @@ RUN mkdir -p /var/run/sshd && \
 RUN groupadd -g 100 vscode || groupmod -g 100 users && \
     useradd -u 99 -g 100 -m -s /bin/bash vscode || usermod -u 99 -g 100 vscode && \
     echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    usermod -aG docker vscode || true
+    usermod -aG docker vscode || true && \
+    cp /etc/skel/.bashrc /home/vscode/.bashrc && \
+    cp /etc/skel/.profile /home/vscode/.profile && \
+    echo -e "\n# Set umask for world-writable files\numask 0000" >> /home/vscode/.bashrc && \
+    echo -e "\n# Set umask for world-writable files\numask 0000" >> /home/vscode/.profile
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /home/vscode/.vscode-server && \
