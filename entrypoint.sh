@@ -26,8 +26,8 @@ echo "vscode:$SSH_PASSWORD" | chpasswd
 
 # Fix permissions on home directory and mounted volumes
 echo "Fixing permissions on /home/vscode and /projects..."
-chown -R vscode:vscode /home/vscode 2>/dev/null || true
-chown vscode:vscode /projects 2>/dev/null || true
+chown -R $PUID:$PGID /home/vscode 2>/dev/null || true
+chown $PUID:$PGID /projects 2>/dev/null || true
 
 # Create .gitconfig from environment variables if they exist (as vscode user)
 if [ ! -z "$GIT_USER_NAME" ] || [ ! -z "$GIT_USER_EMAIL" ]; then
