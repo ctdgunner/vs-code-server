@@ -11,23 +11,27 @@ services:
     volumes:
       # Projects Directory
       - ./projects/:/projects/
-      
-      # VS Code App Data  
-      - ./vs-code-server/:/root/
-      
-      # Docker Socket 
+
+      # VS Code App Data
+      - ./vs-code-server/:/home/vscode/
+
+      # Docker Socket
       - /var/run/docker.sock:/var/run/docker.sock
     
     environment:
+      # User/Group IDs for file permissions (Unraid nobody:users)
+      - PUID=99
+      - PGID=100
+
       # Set default shell
       - SHELL=/bin/bash
-      
+
       # Timezone
       - TZ=UTC
-      
+
       # SSH password (change for security)
       - SSH_PASSWORD=password
-      
+
       # Git configuration via environment variables
       - GIT_USER_NAME=
       - GIT_USER_EMAIL=
